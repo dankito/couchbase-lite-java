@@ -64,8 +64,21 @@ public class JavaContext implements Context {
     }
 
     public File getRootDirectory() {
-        String rootDirectoryPath = System.getProperty("user.dir");
-        return new File(rootDirectoryPath, "data/data/com.couchbase.lite.test/files");
+        File subDirFile = new File(subdir);
+
+        if(subDirFile.isAbsolute()) {
+            return subDirFile;
+        }
+        else {
+            String rootDirectoryPath = System.getProperty("user.dir");
+
+            if(subdir != null) {
+                return new File(rootDirectoryPath, subdir);
+            }
+            else {
+                return new File(rootDirectoryPath, "data/data/com.couchbase.lite.test/files");
+            }
+        }
     }
 
     class FakeNetworkReachabilityManager extends NetworkReachabilityManager {
