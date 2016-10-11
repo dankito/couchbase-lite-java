@@ -28,19 +28,29 @@ import java.io.File;
  * infrastructure.
  */
 public class JavaContext implements Context {
-    private String subdir;
+    private String dir;
 
-    public JavaContext(String subdir) {
-        this.subdir = subdir;
+    public JavaContext(String dir) {
+        this.dir = dir;
     }
 
     public JavaContext() {
-        this.subdir = "cblite";
+        this("cblite");
     }
 
     @Override
     public File getFilesDir() {
-        return new File(getRootDirectory(), subdir);
+        if(dir == null) {
+            return getRootDirectory();
+        }
+
+        File filesDir = new File(dir);
+        if(filesDir.isAbsolute()) {
+            return filesDir;
+        }
+        else {
+            return new File(getRootDirectory(), dir);
+        }
     }
 
     @Override
@@ -64,21 +74,8 @@ public class JavaContext implements Context {
     }
 
     public File getRootDirectory() {
-        File subDirFile = new File(subdir);
-
-        if(subDirFile.isAbsolute()) {
-            return subDirFile;
-        }
-        else {
-            String rootDirectoryPath = System.getProperty("user.dir");
-
-            if(subdir != null) {
-                return new File(rootDirectoryPath, subdir);
-            }
-            else {
-                return new File(rootDirectoryPath, "data/data/com.couchbase.lite.test/files");
-            }
-        }
+        String rootDirectoryPath = System.getProperty("user.dir");
+        return new File(rootDirectoryPath, "data/data/com.couchbase.lite.test/files");
     }
 
     class FakeNetworkReachabilityManager extends NetworkReachabilityManager {
