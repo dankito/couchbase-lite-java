@@ -28,10 +28,10 @@ import java.io.File;
  * infrastructure.
  */
 public class JavaContext implements Context {
-    private String dir;
+    private String databaseDirectory;
 
-    public JavaContext(String dir) {
-        this.dir = dir;
+    public JavaContext(String databaseDirectory) {
+        this.databaseDirectory = databaseDirectory;
     }
 
     public JavaContext() {
@@ -40,16 +40,16 @@ public class JavaContext implements Context {
 
     @Override
     public File getFilesDir() {
-        if(dir == null) {
-            return getRootDirectory();
+        if(databaseDirectory == null) {
+            return getDefaultDatabaseDirectory();
         }
 
-        File filesDir = new File(dir);
+        File filesDir = new File(databaseDirectory);
         if(filesDir.isAbsolute()) {
             return filesDir;
         }
         else {
-            return new File(getRootDirectory(), dir);
+            return new File(getWorkingDirectory(), databaseDirectory);
         }
     }
 
@@ -73,9 +73,13 @@ public class JavaContext implements Context {
         return new JavaSQLiteStorageEngineFactory();
     }
 
-    public File getRootDirectory() {
-        String rootDirectoryPath = System.getProperty("user.dir");
+    public File getDefaultDatabaseDirectory() {
+        String rootDirectoryPath = getWorkingDirectory();
         return new File(rootDirectoryPath, "data/data/com.couchbase.lite.test/files");
+    }
+
+    protected String getWorkingDirectory() {
+        return System.getProperty("user.dir");
     }
 
     class FakeNetworkReachabilityManager extends NetworkReachabilityManager {

@@ -46,7 +46,7 @@ public class LiteTestCaseBase extends TestCase {
 
     private class JavaTestContext extends JavaContext {
         @Override
-        public File getRootDirectory() {
+        public File getDefaultDatabaseDirectory() {
             File rootDirectory = new File("couchbaselitetest");
             if (!rootDirectory.exists()) {
                 rootDirectory.mkdir();
